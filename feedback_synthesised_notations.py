@@ -109,7 +109,7 @@ class FluteSound:
         attack_samples = int(attack * self.sr)
         decay_samples = int(decay * self.sr)
         release_samples = int(release * self.sr)
-
+        
         # Ensure non-negative and correct sum
         if attack_samples + decay_samples + release_samples > length:
             # Scale all down if too long
@@ -385,11 +385,7 @@ class FeedbackTranscriptionEngine:
             'n',   # A# / Komal Ni
             'N'    # B  / Shuddh Ni
         ]
-        # self.sa_freq_tonic = 261.63 # Default Sa to C4
-        # 🔧 CHANGE: Automatic Sa detection
-        self.sa_freq_tonic = self.detect_sa_from_audio(original_audio)
-        print(f"🎯 Detected Sa: {self.sa_freq_tonic:.2f} Hz")
-
+        self.sa_freq_tonic = 261.63 # Default Sa to C4
 
     def freq_to_svara(self, frequency: float, sa_freq: float) -> Tuple[str, int, float]:
         """
@@ -526,7 +522,7 @@ class FeedbackTranscriptionEngine:
                     if new_duration < 0.1: new_duration *= 1.2 # Make very short notes slightly longer
                     elif new_duration > 1.0: new_duration *= 0.9 # Make very long notes slightly shorter
                 refined_notes.append({
-                    **note,
+                    **note, 
                     'duration': new_duration
                 })
 
@@ -537,7 +533,7 @@ class FeedbackTranscriptionEngine:
                 if similarity_scores['rhythm'] < 0.8:
                     new_duration *= np.random.uniform(0.95, 1.05) # Small random duration jitter
                 refined_notes.append({
-                    **note,
+                    **note, 
                     'duration': new_duration
                 })
         else: # High similarity, make minimal changes or none
@@ -656,8 +652,8 @@ def test_feedback_transcription(audio_file: str, output_prefix: str = "output"):
     """
     engine = FeedbackTranscriptionEngine(
         base_note='Sa', # Using 'Sa' as the base for Indian Svara mapping
-        max_iterations=15,
-        target_similarity=0.90
+        max_iterations=5,
+        target_similarity=0.85
     )
 
     results = engine.transcribe_with_feedback(audio_file, output_prefix)
